@@ -1,0 +1,6 @@
+[submodule "third_party/luacheck"]
+	path = third_party/luacheck
+	url = https://github.com/mpeterv/luacheck.git
+[submodule "third_party/lua.vm.js"]
+	path = third_party/lua.vm.js
+	url = https://github.com/satoren/lua.vm.js.git

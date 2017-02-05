@@ -1,0 +1,55 @@
+{
+    "name": "lualint",
+    "displayName": "lua lint",
+    "description": "Static error checker for Lua",
+    "version": "0.0.1",
+    "publisher": "satoren",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "categories": [
+        "Linters"
+    ],
+    "activationEvents": [
+        "onLanguage:lua"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "lua-lint configuration",
+            "properties": {
+                "lualint.useLuacheck": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true use luacheck. Otherwise syntax error check only."
+                },
+                "lualint.maxNumberOfReports": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "Maximum number of check reports."
+                }
+            }
+        }
+    },
+    "scripts": {
+		"copy:dist": "node ./script/copy_dist.js",
+        "vscode:prepublish": "tsc -p ./ && node ./script/copy_dist.js",
+        "compile": "tsc -watch -p ./ ",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^2.6.3",
+        "vscode-languageserver": "^2.6.2"
+    },
+    "devDependencies": {
+        "typescript": "^2.1.5",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32",
+		"fs-extra":"^2.0.0"
+    },
+	"icon": "images/icon.png"
+}
