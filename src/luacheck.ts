@@ -60,6 +60,17 @@ export class luacheck {
     }
 
     private invokeCheckFunction(fn, source, max_reports) {
+        function member_copy(luadata, table, name) {
+            let value = luadata.get(name);
+            if (value !== undefined) {
+                if (!value.free) {
+                    table[name] = value
+                }
+                else {
+                    value.free()
+                }
+            }
+        }
         let reports = []
         try {
             let lreports = fn.invoke([source], 1)[0]
@@ -68,25 +79,24 @@ export class luacheck {
                 if (!lreport) {
                     break;
                 }
-                let r = {
-                    code: lreport.get("code")
-                    , column: lreport.get("column")
-                    , end_column: lreport.get("end_column")
-                    , line: lreport.get("line")
-                    , name: lreport.get("name")
-                    , msg: lreport.get("msg")
-                    , message: lreport.get("message")
-                    , module: lreport.get("module")
-                    , indirect: lreport.get("indirect")
-                    , func: lreport.get("func")
-                    , recursive: lreport.get("recursive")
-                    , mutually_recursive: lreport.get("mutually_recursive")
-                    , field: lreport.get("field")
-                    , prev_line: lreport.get("prev_line")
-                    , label: lreport.get("label")
-                }
+                let rt = {}
+                member_copy(lreport, rt, "code");
+                member_copy(lreport, rt, "column");
+                member_copy(lreport, rt, "end_column");
+                member_copy(lreport, rt, "line");
+                member_copy(lreport, rt, "name");
+                member_copy(lreport, rt, "msg");
+                member_copy(lreport, rt, "message");
+                member_copy(lreport, rt, "module");
+                member_copy(lreport, rt, "indirect");
+                member_copy(lreport, rt, "func");
+                member_copy(lreport, rt, "recursive");
+                member_copy(lreport, rt, "mutually_recursive");
+                member_copy(lreport, rt, "field");
+                member_copy(lreport, rt, "prev_line");
+                member_copy(lreport, rt, "label");
                 lreport.free();
-                reports.push(r)
+                reports.push(rt)
             }
             lreports.free();
         }
@@ -95,11 +105,11 @@ export class luacheck {
         }
         finally {
         }
-        return reports;
+        return JSON.parse(JSON.stringify(reports));
 
     }
 
-    public check(filepath, source_text="", max_reports = 100): report[] {
+    public check(filepath, source_text = "", max_reports = 100): report[] {
 
         if (fs.existsSync(filepath)) {
             var full_path = path.resolve(filepath);
