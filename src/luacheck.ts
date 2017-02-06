@@ -34,7 +34,7 @@ export class luacheck {
         var FS = L.filesystem();
         // Create 'lfs' library
         var lfs = {
-            currentdir: function () { return FS.cwd(); },
+            currentdir: function () { return './'; },//fixme NODEFS is buggy at Windows
             attributes: function (type) {
                 let path = this;
                 if (type == 'mode') {
