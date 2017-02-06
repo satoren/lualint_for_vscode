@@ -11,11 +11,11 @@ export interface report {
     column: number;
     end_column: number;
     line: number;
-    name: string;
+    name?: string;
     message: string;
     msg?: string;
-    module?: string;
-    indirect?: string;
+    module?: boolean;
+    indirect?: boolean;
     func?: boolean;
     recursive?: string;
     mutually_recursive?: string;
