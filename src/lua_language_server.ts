@@ -7,7 +7,7 @@ import {
     InitializeParams, InitializeResult
 } from 'vscode-languageserver';
 
-import * as url from 'url';
+import Uri from 'vscode-uri'
 import * as path from 'path';
 
 import * as luacheck from './luacheck';
@@ -23,7 +23,7 @@ interface Settings {
 // file
 interface LuaLintSetting {
     useLuacheck: boolean;
-    maxNumberOfReports:number;
+    maxNumberOfReports: number;
 }
 
 // hold the useLuacheck setting
@@ -74,10 +74,12 @@ function validateTextDocument(textDocument: TextDocument): void {
 
 function syntax_error_check(text, uri) {
     const message_parse_reg = /..+:([0-9]+): (.+) near.*[<'](.*)['>]/;
+
+    let fspath = Uri.parse(uri).fsPath;
     let diagnostics: Diagnostic[] = [];
     try {
-        
-        let syntax = L.load(text,path.basename(url.parse(uri).pathname));
+
+        let syntax = L.load(text, path.basename(fspath));
         syntax.free();
     }
     catch (e) {
@@ -104,8 +106,7 @@ function syntax_error_check(text, uri) {
                 start: errorStart,
                 end: errorEnd
             },
-            message: e.message,
-            source: uri
+            message: e.message
         });
     }
 
@@ -115,13 +116,12 @@ function syntax_error_check(text, uri) {
 
 function fullcheck_by_luacheck(text, uri) {
 
-    let location = uri;
-    if (location.startsWith("file:///")) { location = location.substr("file:///".length) }
+    let fspath = Uri.parse(uri).fsPath;
 
-    var document_full_path = path.resolve(location);
+    var document_full_path = path.resolve(fspath);
 
     let diagnostics: Diagnostic[] = [];
-    let reports = checker.check(document_full_path, text,maxNumberOfReports)
+    let reports = checker.check(document_full_path, text, maxNumberOfReports)
     for (var report of reports) {
 
         let errorStart = { line: report.line - 1, character: report.column - 1 };
@@ -137,8 +137,7 @@ function fullcheck_by_luacheck(text, uri) {
                 start: errorStart,
                 end: errorEnd
             },
-            message: report.message,
-            source: uri
+            message: report.message
         });
     }
     // Send the computed diagnostics to VS Code.

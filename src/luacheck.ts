@@ -28,16 +28,26 @@ export class luacheck {
     constructor(public L) {
         L.mount(luacheck_module_path, "/luacheck");
         L.execute("package.path = package.path..';/luacheck/?.lua;/luacheck/?/init.lua'");
+        L.execute('luacheck = require("luacheck");')
+
+
         var FS = L.filesystem();
         // Create 'lfs' library
         var lfs = {
             currentdir: function () { return FS.cwd(); },
-            attributes: function (path, type) {
+            attributes: function (type) {
+                let path = this;
                 if (type == 'mode') {
-                    var m = FS.stat(path).mode;
-                    if (FS.isFile(m)) { return "file" }
-                    if (FS.isDir(m)) { return "directory" }
-                    return 0;
+                    try {
+                        var stat = FS.stat(path);
+                        if (!stat) { return null; }
+                        var m = stat.mode;
+                        if (FS.isFile(m)) { return "file" }
+                        if (FS.isDir(m)) { return "directory" }
+                    } catch (e) {
+
+                    }
+                    return "";
                 } else { return 0; }
             },
             dir: function () { return {}; },
@@ -45,14 +55,14 @@ export class luacheck {
         L.push(lfs);
         L.setglobal("lfs");
         L.execute("package.loaded.lfs = lfs")
-        L.execute('luacheck = require("luacheck")')
+
+        L.execute('luacheck_config = require("luacheck.config");')
     }
 
-    private invokeCheckFunction(fn, source,max_reports) {
+    private invokeCheckFunction(fn, source, max_reports) {
         let reports = []
-        let lreports;
         try {
-            lreports = fn.invoke([source], 1)[0]
+            let lreports = fn.invoke([source], 1)[0]
             for (var i = 1; i < max_reports; i++) {
                 let lreport = lreports.get(i);
                 if (!lreport) {
@@ -78,42 +88,50 @@ export class luacheck {
                 lreport.free();
                 reports.push(r)
             }
+            lreports.free();
+        }
+        catch (e) {
+            console.error(e)
         }
         finally {
-            lreports.free();
         }
         return reports;
 
     }
 
-    public check(filepath, source_text,max_reports=100): report[] {
+    public check(filepath, source_text, max_reports = 100): report[] {
 
-        if (fs.exists(filepath)) {
+        if (fs.existsSync(filepath)) {
             var full_path = path.resolve(filepath);
             var token = path.parse(full_path);
             var cwd = path.dirname(full_path);
             var filename = path.basename(full_path);
             this.L.chroot(token.root);
             this.L.chdir(cwd);
+            filepath = path.relative(cwd, filepath)
         }
 
         if (source_text.length != 0) {
-            let file_checker = this.L.load('  local reports = luacheck.check_strings({...},{})[1] ' +
+
+
+            let file_checker = this.L.load('local options = luacheck_config.load_config().options ' +
+                '  local reports = luacheck.check_strings({...},options)[1] ' +
                 '  for i = 1,#reports do ' +
                 '   reports[i]["message"] =luacheck.get_message(reports[i]) ' +
                 '  end ' +
                 ' return reports ');
-            let reports = this.invokeCheckFunction(file_checker, source_text,max_reports);
+            let reports = this.invokeCheckFunction(file_checker, source_text, max_reports);
             file_checker.free();
             return reports;
         }
         else {
-            let strings_checker = this.L.load('  local reports = luacheck.check_files({...},{})[1] ' +
+            let strings_checker = this.L.load('local options = luacheck_config.load_config().options ' +
+                '  local reports = luacheck.check_files({...},options)[1] ' +
                 '  for i = 1,#reports do ' +
                 '   reports[i]["message"] =luacheck.get_message(reports[i]) ' +
                 '  end ' +
                 ' return reports ');
-            let reports = this.invokeCheckFunction(strings_checker, filepath,max_reports);
+            let reports = this.invokeCheckFunction(strings_checker, filepath, max_reports);
             strings_checker.free();
             return reports;
         }

@@ -13,11 +13,12 @@ Lua error checker
 
 This extension contributes the following settings:
 
-* `lua-lint.useLuacheck`: If true use [luacheck](https://github.com/mpeterv/luacheck). Otherwise only syntax error check.
+* `lualint.useLuacheck`: If true use [luacheck](https://github.com/mpeterv/luacheck) more detail analyze. Otherwise syntax error only check.
+* `lualint.maxNumberOfReports`: Maximum number of code check reports.
 
 ## Known Issues
 
-Do not configuration luacheck option.
+
 
 ## Release Notes
 
