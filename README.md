@@ -18,7 +18,7 @@ This extension contributes the following settings:
 
 ## Known Issues
 
-
+* Wrong column with multibyte characters
 
 ## Release Notes
 
