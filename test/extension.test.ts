@@ -58,4 +58,28 @@ suite("luacheck Tests", () => {
 
         assert(JSON.stringify(req) == JSON.stringify(reports))
     });
+    test("defined.lua", () => {
+        const CHECK_DATA = path.join(TEST_DATA_ROOT, 'samples', 'defined.lua');
+        let reports = checker.check(CHECK_DATA);
+        let req = [{"code":"111","column":1,"end_column":3,"line":1,"name":"foo","message":"setting non-standard global variable 'foo'"},{"code":"112","column":10,"end_column":12,"line":3,"name":"foo","message":"mutating non-standard global variable 'foo'"},{"code":"113","column":4,"end_column":6,"line":4,"name":"baz","message":"accessing undefined variable 'baz'"}]
+        assert(JSON.stringify(req) == JSON.stringify(reports))
+    });
+    test("defined2.lua", () => {
+        const CHECK_DATA = path.join(TEST_DATA_ROOT, 'samples', 'defined2.lua');
+        let reports = checker.check(CHECK_DATA);
+        let req =[{"code":"113","column":1,"end_column":3,"line":1,"name":"foo","message":"accessing undefined variable 'foo'"}]
+        assert(JSON.stringify(req) == JSON.stringify(reports))
+    });
+    test("defined3.lua", () => {
+        const CHECK_DATA = path.join(TEST_DATA_ROOT, 'samples', 'defined3.lua');
+        let reports = checker.check(CHECK_DATA);
+        let req = [{"code":"111","column":1,"end_column":3,"line":1,"name":"foo","message":"setting non-standard global variable 'foo'"},{"code":"111","column":1,"end_column":3,"line":2,"name":"foo","message":"setting non-standard global variable 'foo'"},{"code":"111","column":1,"end_column":3,"line":3,"name":"bar","message":"setting non-standard global variable 'bar'"}]
+        assert(JSON.stringify(req) == JSON.stringify(reports))
+    });
+    test("defined4.lua", () => {
+        const CHECK_DATA = path.join(TEST_DATA_ROOT, 'samples', 'defined4.lua');
+        let reports = checker.check(CHECK_DATA);
+        let req = [{"code":"111","column":10,"end_column":12,"line":1,"name":"foo","message":"setting non-standard global variable 'foo'"},{"code":"111","column":4,"end_column":6,"line":2,"name":"foo","message":"setting non-standard global variable 'foo'"},{"code":"111","column":4,"end_column":6,"line":3,"name":"bar","message":"setting non-standard global variable 'bar'"}]
+        assert(JSON.stringify(req) == JSON.stringify(reports))
+    });
 });
