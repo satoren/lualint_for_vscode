@@ -5,5 +5,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.2] - 2017-02-07
+- add repositry URL , Known Issues
+
 ## [0.0.1] - 2017-02-06
 - Initial release

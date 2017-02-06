@@ -2,7 +2,7 @@
     "name": "lualint",
     "displayName": "lua lint",
     "description": "Static error checker for Lua",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "satoren",
     "engines": {
         "vscode": "^1.5.0"

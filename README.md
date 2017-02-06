@@ -19,9 +19,9 @@ This extension contributes the following settings:
 ## Known Issues
 
 * Wrong column with multibyte characters
+* ``.luacheckrc`` read only in the same directory
 
 ## Release Notes
 
-### 0.0.1
-
-Initial release 
+### 0.0.2
+add repositry URL
