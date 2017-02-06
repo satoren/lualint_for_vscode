@@ -16,7 +16,7 @@ export interface report {
     msg?: string;
     module?: string;
     indirect?: string;
-    func?: string;
+    func?: boolean;
     recursive?: string;
     mutually_recursive?: string;
     field?: string;
@@ -99,7 +99,7 @@ export class luacheck {
 
     }
 
-    public check(filepath, source_text, max_reports = 100): report[] {
+    public check(filepath, source_text="", max_reports = 100): report[] {
 
         if (fs.existsSync(filepath)) {
             var full_path = path.resolve(filepath);
