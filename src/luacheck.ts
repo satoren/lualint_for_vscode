@@ -34,7 +34,7 @@ export class luacheck {
         var FS = L.filesystem();
         // Create 'lfs' library
         var lfs = {
-            currentdir: function () { return './'; },//fixme NODEFS is buggy at Windows
+            currentdir: function () { return FS.cwd(); },
             attributes: function (type) {
                 let path = this;
                 if (type == 'mode') {
@@ -108,15 +108,24 @@ export class luacheck {
         return JSON.parse(JSON.stringify(reports));
 
     }
-
     public check(filepath, source_text = "", max_reports = 100): report[] {
 
         if (fs.existsSync(filepath)) {
-            var full_path = path.resolve(filepath);
-            var token = path.parse(full_path);
-            var cwd = path.dirname(full_path);
-            var filename = path.basename(full_path);
-            this.L.chroot(token.root);
+            let full_path = path.resolve(filepath);
+            let token = path.parse(full_path);
+            let cwd = path.dirname(full_path);
+            let filename = path.basename(full_path);
+            let mountdir = cwd
+            try {
+                while (true) {
+                    let root = mountdir.split(path.sep).slice(0, -1).join(path.sep);
+                    this.L.chroot(root);
+                    mountdir = root
+                }
+
+            } catch (e) {
+                this.L.chroot(mountdir);
+            }
             this.L.chdir(cwd);
             filepath = path.relative(cwd, filepath)
         }
