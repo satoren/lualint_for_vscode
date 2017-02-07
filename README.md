@@ -1,13 +1,14 @@
-# luacheck README
+# Lua lint for visual studio code
 
-Lua error checker
+[![Build Status](https://travis-ci.org/satoren/kaguya.svg?branch=master)](https://travis-ci.org/satoren/kaguya)
+[![Build status](https://ci.appveyor.com/api/projects/status/her345kmbtg0htp7/branch/master?svg=true)](https://ci.appveyor.com/project/satoren/lualint-for-vscode/branch/master)
+
+
 
 ## Features
 * Syntax error check
-* Support all platforms for Visual Studio Code
+* Support all platforms for Visual Studio Code with no dependency
 * Static analyze by [luacheck](https://github.com/mpeterv/luacheck) (default off)
-* No dependency and additional installation 
-
 
 ## Extension Settings
 
