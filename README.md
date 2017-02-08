@@ -20,11 +20,10 @@ This extension contributes the following settings:
 ## Known Issues
 
 * Wrong column with multibyte characters
-* ``.luacheckrc`` read only in the same directory
 
 ## Release Notes
 
-### 0.0.3
+### 0.0.4
 - [luacheck](https://github.com/mpeterv/luacheck) is enabled by default.
 - Fixed bug, even if closed the file, the problem messages remained displayed.
 

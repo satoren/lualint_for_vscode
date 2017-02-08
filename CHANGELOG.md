@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [0.0.3] - 2017-02-08
+## [0.0.4] - 2017-02-08
 ### Changed
 - luacheck is enabled by default.
 ### Fixed
