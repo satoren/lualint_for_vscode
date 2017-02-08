@@ -52,14 +52,21 @@ connection.onInitialize((params): InitializeResult => {
 // as well.
 connection.onDidChangeConfiguration((change) => {
     let settings = <Settings>change.settings;
-    useLuacheck = settings.lualint.useLuacheck;
+    useLuacheck = settings.lualint.useLuacheck != null ? settings.lualint.useLuacheck : false;
     maxNumberOfReports = settings.lualint.maxNumberOfReports || 100;
     // Revalidate any open text documents
     documents.all().forEach(validateTextDocument);
 });
 
 documents.onDidChangeContent((change) => {
-    validateTextDocument(change.document)
+    validateTextDocument(change.document);
+});
+documents.onDidOpen((e) => {
+    validateTextDocument(e.document);
+});
+documents.onDidClose((e) => {
+    connection.sendDiagnostics(
+        { uri: e.document.uri, diagnostics: [] });
 });
 
 function validateTextDocument(textDocument: TextDocument): void {

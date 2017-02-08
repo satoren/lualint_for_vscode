@@ -2,7 +2,7 @@
     "name": "lualint",
     "displayName": "lua lint",
     "description": "Static error checker for Lua",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "satoren",
     "engines": {
         "vscode": "^1.5.0"
@@ -28,7 +28,7 @@
             "properties": {
                 "lualint.useLuacheck": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "If true use luacheck. Otherwise syntax error check only."
                 },
                 "lualint.maxNumberOfReports": {

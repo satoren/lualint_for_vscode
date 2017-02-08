@@ -8,7 +8,7 @@
 ## Features
 * Syntax error check
 * Support all platforms for Visual Studio Code with no dependency
-* Static analyze by [luacheck](https://github.com/mpeterv/luacheck) (default off)
+* Static analyze by [luacheck](https://github.com/mpeterv/luacheck) (default on)
 
 ## Extension Settings
 
@@ -24,5 +24,9 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.0.3
+- [luacheck](https://github.com/mpeterv/luacheck) is enabled by default.
+- Fixed bug, even if closed the file, the problem messages remained displayed.
+
 ### 0.0.2
-add repositry URL
+- Add repositry URL
