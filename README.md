@@ -1,6 +1,6 @@
 # Lua lint for visual studio code
 
-[![Build Status](https://travis-ci.org/satoren/kaguya.svg?branch=master)](https://travis-ci.org/satoren/kaguya)
+[![Build Status](https://travis-ci.org/satoren/lualint_for_vscode.svg?branch=master)](https://travis-ci.org/satoren/lualint_for_vscode)
 [![Build status](https://ci.appveyor.com/api/projects/status/her345kmbtg0htp7/branch/master?svg=true)](https://ci.appveyor.com/project/satoren/lualint-for-vscode/branch/master)
 
 
