@@ -60,14 +60,16 @@ export class luacheck {
     }
 
     private invokeCheckFunction(fn, source, max_reports) {
-        function member_copy(luadata, table, name) {
-            let value = luadata.get(name);
-            if (value !== undefined) {
-                if (!value.free) {
-                    table[name] = value
-                }
-                else {
-                    value.free()
+        function members_copy(luadata, table, names) {
+            for (let name of names) {
+                let value = luadata.get(name);
+                if (value !== undefined) {
+                    if (!value.free) {
+                        table[name] = value
+                    }
+                    else {
+                        value.free()
+                    }
                 }
             }
         }
@@ -80,21 +82,9 @@ export class luacheck {
                     break;
                 }
                 let rt = {}
-                member_copy(lreport, rt, "code");
-                member_copy(lreport, rt, "column");
-                member_copy(lreport, rt, "end_column");
-                member_copy(lreport, rt, "line");
-                member_copy(lreport, rt, "name");
-                member_copy(lreport, rt, "msg");
-                member_copy(lreport, rt, "message");
-                member_copy(lreport, rt, "module");
-                member_copy(lreport, rt, "indirect");
-                member_copy(lreport, rt, "func");
-                member_copy(lreport, rt, "recursive");
-                member_copy(lreport, rt, "mutually_recursive");
-                member_copy(lreport, rt, "field");
-                member_copy(lreport, rt, "prev_line");
-                member_copy(lreport, rt, "label");
+                members_copy(lreport, rt, ["code", "column", "end_column", "line", "name"
+                    , "msg", "message", "module", "indirect", "func", "recursive"
+                    , "mutually_recursive", "field", "prev_line", "label"]);
                 lreport.free();
                 reports.push(rt)
             }
