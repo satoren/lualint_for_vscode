@@ -16,3 +16,8 @@
 
 ## [0.0.1] - 2017-02-06
 - Initial release
+
+
+[Unreleased]: https://github.com/satoren/lualint_for_vscode/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/satoren/lualint_for_vscode/compare/v0.0.2...v0.0.4
+W
