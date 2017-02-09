@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- add watch .luacheckrc files
 
 ## [0.0.4] - 2017-02-08
 ### Changed

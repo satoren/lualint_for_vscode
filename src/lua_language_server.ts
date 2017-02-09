@@ -58,6 +58,10 @@ connection.onDidChangeConfiguration((change) => {
     documents.all().forEach(validateTextDocument);
 });
 
+connection.onDidChangeWatchedFiles((handler) => {
+    documents.all().forEach(validateTextDocument);
+});
+
 documents.onDidChangeContent((change) => {
     validateTextDocument(change.document);
 });
