@@ -83,11 +83,16 @@ function validateTextDocument(textDocument: TextDocument): void {
 
 }
 
-function syntax_error_check(text, uri) {
+function syntax_error_check(text: string, uri: string) {
     const message_parse_reg = /..+:([0-9]+): (.+) near.*[<'](.*)['>]/;
 
     let fspath = Uri.parse(uri).fsPath;
     let diagnostics: Diagnostic[] = [];
+    let lineoffset = 0;
+    if (text.startsWith('#')) {//exclude first line comment
+        lineoffset = 1;
+        text = text.substring(text.indexOf("\n") + 1);
+    }
     try {
 
         let syntax = L.load(text, path.basename(fspath));
@@ -102,13 +107,14 @@ function syntax_error_check(text, uri) {
         }
         let lines = text.split(/\r?\n/g);
         let errorLine = lines[error.line - 1];
-        let errorStart = { line: error.line - 1, character: 0 };
-        let errorEnd = { line: error.line - 1, character: errorLine.length };
+        let errorLineNum = lineoffset + error.line - 1
+        let errorStart = { line: errorLineNum, character: 0 };
+        let errorEnd = { line:errorLineNum, character: errorLine.length };
         if (error.near != "eof") {
             let errorColstart = errorLine.indexOf(error.near);
             if (errorColstart >= 0) {
-                errorStart = { line: error.line - 1, character: errorColstart };
-                errorEnd = { line: error.line - 1, character: errorColstart + error.near.length };
+                errorStart = { line: errorLineNum, character: errorColstart };
+                errorEnd = { line: errorLineNum, character: errorColstart + error.near.length };
             }
         }
         diagnostics.push({
@@ -126,18 +132,23 @@ function syntax_error_check(text, uri) {
     connection.sendDiagnostics({ uri: uri, diagnostics });
 }
 
-function fullcheck_by_luacheck(text, uri) {
+function fullcheck_by_luacheck(text: string, uri: string) {
 
     let fspath = Uri.parse(uri).fsPath;
 
     var document_full_path = path.resolve(fspath);
 
     let diagnostics: Diagnostic[] = [];
+    let lineoffset = 0;
+    if (text.startsWith('#')) {//exclude first line comment
+        lineoffset = 1;
+        text = text.substring(text.indexOf("\n") + 1);
+    }
     let reports = checker.check(document_full_path, text, maxNumberOfReports)
     for (var report of reports) {
-
-        let errorStart = { line: report.line - 1, character: report.column - 1 };
-        let errorEnd = { line: report.line - 1, character: report.end_column };
+        let errorLineNum = lineoffset + report.line - 1
+        let errorStart = { line: errorLineNum, character: report.column - 1 };
+        let errorEnd = { line: errorLineNum, character: report.end_column };
 
         let level = DiagnosticSeverity.Warning;
         if (report.msg) {
