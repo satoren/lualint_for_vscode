@@ -11,8 +11,8 @@ export interface report {
     column: number;
     end_column: number;
     line: number;
-    name?: string;
     message: string;
+    name?: string;
     msg?: string;
     module?: boolean;
     indirect?: boolean;
@@ -59,19 +59,34 @@ export class luacheck {
         L.execute('luacheck_config = require("luacheck.config");')
     }
 
-    private invokeCheckFunction(fn, source, max_reports) {
-        function members_copy(luadata, table, names) {
-            for (let name of names) {
+    private invokeCheckFunction(fn, source, max_reports, convert_column: (line: number, col: number) => number): report[] {
+        function createReport(luadata): report {
+            let report = {
+                code: "",
+                column: 0,
+                end_column: 0,
+                line: 0,
+                message: "",
+            }
+            let members = ["code", "column", "end_column", "line", "name"
+                , "msg", "message", "module", "indirect", "func", "recursive"
+                , "mutually_recursive", "field", "prev_line", "label"];
+            for (let name of members) {
                 let value = luadata.get(name);
                 if (value !== undefined) {
                     if (!value.free) {
-                        table[name] = value
+                        report[name] = value
                     }
                     else {
                         value.free()
                     }
                 }
             }
+            if (convert_column) {
+                report.column = convert_column(report.line, report.column)
+                report.end_column = convert_column(report.line, report.end_column)
+            }
+            return report
         }
         let reports = []
         try {
@@ -81,10 +96,7 @@ export class luacheck {
                 if (!lreport) {
                     break;
                 }
-                let rt = {}
-                members_copy(lreport, rt, ["code", "column", "end_column", "line", "name"
-                    , "msg", "message", "module", "indirect", "func", "recursive"
-                    , "mutually_recursive", "field", "prev_line", "label"]);
+                let rt = createReport(lreport)
                 lreport.free();
                 reports.push(rt)
             }
@@ -98,7 +110,14 @@ export class luacheck {
         return JSON.parse(JSON.stringify(reports));
 
     }
-    public check(filepath, source_text = "", max_reports = 100): report[] {
+    public check(filepath, source_text: string = null, max_reports = 100, utf8position = false): report[] {
+        let lines: string[] = null;
+        if (source_text) {
+            lines = source_text.split(/\r?\n/g);
+        }
+        else {
+            lines = fs.readFileSync(filepath, "utf-8").split(/\r?\n/g);
+        }
 
         if (fs.existsSync(filepath)) {
             let full_path = path.resolve(filepath);
@@ -119,15 +138,38 @@ export class luacheck {
             this.L.chdir(cwd);
             filepath = path.relative(cwd, filepath)
         }
+        function convertColumn(line: number, column: number) {
+            let t = lines[line - 1];
+            let utf8len = 0;
 
-        if (source_text.length != 0) {
+            let codeCount = 0;
+            for (codeCount = 0; codeCount < t.length; codeCount++) {
+                let codepoint = t.codePointAt(codeCount);
+                if (codepoint <= 0x7F) {
+                    utf8len += 1;
+                }
+                else if (codepoint <= 0x07FF) {
+                    utf8len += 2;
+                }
+                else if (codepoint <= 0xFFFF) {
+                    utf8len += 3;
+                }
+                else if (codepoint <= 0x1FFFFF) {
+                    utf8len += 4;
+                }
+                if (column <= utf8len) { break; }
+            }
+            return codeCount + 1;
+        }
+
+        if (source_text) {
             let file_checker = this.L.load('local options = luacheck_config.load_config().options ' +
                 '  local reports = luacheck.check_strings({...},options)[1] ' +
                 '  for i = 1,#reports do ' +
                 '   reports[i]["message"] =luacheck.get_message(reports[i]) ' +
                 '  end ' +
                 ' return reports ');
-            let reports = this.invokeCheckFunction(file_checker, source_text, max_reports);
+            let reports = this.invokeCheckFunction(file_checker, source_text, max_reports, convertColumn);
             file_checker.free();
             return reports;
         }
@@ -138,7 +180,7 @@ export class luacheck {
                 '   reports[i]["message"] =luacheck.get_message(reports[i]) ' +
                 '  end ' +
                 ' return reports ');
-            let reports = this.invokeCheckFunction(strings_checker, filepath, max_reports);
+            let reports = this.invokeCheckFunction(strings_checker, filepath, max_reports, convertColumn);
             strings_checker.free();
             return reports;
         }
