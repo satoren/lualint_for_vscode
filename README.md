@@ -21,9 +21,13 @@ This extension contributes the following settings:
 
 ## Known Issues
 
-* Wrong column with multibyte characters
-
 ## Release Notes
+
+### 0.0.5
+- add watch .luacheckrc files
+- add source name for report
+- Exclude first line comment with #
+- Fix wrong column with multibyte characters
 
 ### 0.0.4
 - [luacheck](https://github.com/mpeterv/luacheck) is enabled by default.
