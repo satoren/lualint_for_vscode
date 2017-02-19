@@ -76,7 +76,7 @@ export class luacheck {
         let reports = []
         try {
             let lreports = fn.invoke([source], 1)[0]
-            for (var i = 1; i < max_reports; i++) {
+            for (var i = 1; i <= max_reports; i++) {
                 let lreport = lreports.get(i);
                 if (!lreport) {
                     break;
