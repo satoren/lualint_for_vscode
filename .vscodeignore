@@ -3,6 +3,7 @@
 out/test/**
 test/**
 third_party/**
+images/**
 src/**
 **/*.map
 .gitignore

@@ -10,6 +10,8 @@
 * Support all platforms for Visual Studio Code with no dependency
 * Static analyze by [luacheck](https://github.com/mpeterv/luacheck) (default on)
 
+![animation](https://raw.githubusercontent.com/satoren/lualint_for_vscode/master/images/lualint.gif)
+
 ## Extension Settings
 
 This extension contributes the following settings:
