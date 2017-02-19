@@ -117,6 +117,7 @@ function syntax_error_check(text, uri) {
                 start: errorStart,
                 end: errorEnd
             },
+            source:"lualint",
             message: e.message
         });
     }
@@ -148,6 +149,7 @@ function fullcheck_by_luacheck(text, uri) {
                 start: errorStart,
                 end: errorEnd
             },
+            source:"lualint",
             message: report.message
         });
     }
