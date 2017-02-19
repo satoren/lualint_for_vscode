@@ -121,8 +121,6 @@ export class luacheck {
         }
 
         if (source_text.length != 0) {
-
-
             let file_checker = this.L.load('local options = luacheck_config.load_config().options ' +
                 '  local reports = luacheck.check_strings({...},options)[1] ' +
                 '  for i = 1,#reports do ' +
